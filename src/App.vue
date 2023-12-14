@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, reactive } from 'vue';
+  import { ref, reactive, watch, onMounted } from 'vue';
   import { uid } from 'uid';
 
   import Header from './components/Header.vue';
@@ -17,6 +17,24 @@
         alta: '',
         sintomas: ''
     });
+
+    watch(pacientes, () => {
+      guardarLocalStorage()
+    },{
+      deep: true
+    })
+
+    const guardarLocalStorage = () => {
+      localStorage.setItem('pacientes', JSON.stringify(pacientes.value))
+    }
+
+    onMounted(() => {
+      const pacientesStorage = localStorage.getItem('pacientes')
+
+      if (pacientesStorage) {
+        pacientes.value = JSON.parse(pacientesStorage)
+      }
+    })
 
     const guardarPaciente = () => {
 
@@ -59,6 +77,11 @@
       Object.assign(paciente, pacienteEditar);
     }
 
+    const eliminarPaciente = (id) => {
+      pacientes.value = pacientes.value.filter(paciente => paciente.id !== id);
+
+    }
+
 
 </script>
 
@@ -95,6 +118,7 @@
             v-for="paciente in pacientes"  
             :paciente="paciente"
             @actualizar-paciente="actualizarPaciente"
+            @eliminar-paciente="eliminarPaciente"
           />
 
         </div>
