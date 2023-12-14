@@ -19,10 +19,20 @@
     });
 
     const guardarPaciente = () => {
-      pacientes.value.push({
-        ...paciente,
-        id: uid()
-      })
+
+      if (paciente.id) {
+        const { id } = paciente
+        const i = pacientes.value.findIndex((pacienteState) => pacienteState.id === id)
+        pacientes.value[i] = {...paciente}
+
+      } else {
+
+        pacientes.value.push({
+          ...paciente,
+          id: uid()
+        })
+
+      }
 
       // paciente.nombre = ''
       // paciente.propietario = ''
@@ -36,10 +46,19 @@
         propietario: '',
         email: '',
         alta: '',
-        sintomas: ''
+        sintomas: '',
+        id: null
       })
 
     }
+
+
+    const actualizarPaciente = (id) => {
+      const pacienteEditar = pacientes.value.filter(paciente => paciente.id === id)[0];
+
+      Object.assign(paciente, pacienteEditar);
+    }
+
 
 </script>
 
@@ -74,6 +93,7 @@
           <Paciente 
             v-for="paciente in pacientes"  
             :paciente="paciente"
+            @actualizar-paciente="actualizarPaciente"
           />
 
         </div>
